@@ -6,8 +6,19 @@ Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/nikosbosse/scoringutils2
 BugReports: https://github.com/nikosbosse/scoringutils2/issues
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    data.table,
+    ggplot2,
+    methods,
+    goftest
+RoxygenNote: 7.1.1
+Depends: 
+    R (>= 2.10)
