@@ -14,32 +14,16 @@ eval_forecasts_quantile <- function(data,
   # check format
   if ("boundary" %in% names(data)) {
     format <- "range_long_format"
-  } else {
-    if ("quantile" %in% names(data) & !("range" %in% names(data))) {
-      format <- "quantile_format"
-    } else {
-      format <- "range_wide_format"
-    }
-  }
-
-  # convert into long format if necessary
-  if (format == "quantile_wide_format") {
-    colnames <- colnames(data)
-    ranges <- colnames[grepl("lower", colnames) | grepl("upper", colnames)]
-
-    data <- data.table::melt(data,
-                             measure.vars = ranges,
-                             variable.name = "range",
-                             value.name = "prediction")
-    data[, boundary := gsub("_.*", "", range)]
-    data[, range := as.numeric(gsub("^.*?_","", range))]
+  } else if ("quantile" %in% names(data) & !("range" %in% names(data))) {
+    format <- "quantile_format"
   }
 
   # make sure to have both quantile as well as range format
   if ("quantile" %in% names(data) & !("range" %in% names(data))) {
-    data <- scoringutils::quantile_to_range(data, keep_quantile_col = FALSE)
+    data <- scoringutils2::quantile_to_range_long(data,
+                                                  keep_quantile_col = FALSE)
   }
-  quantile_data <- scoringutils::range_to_quantile(data,
+  quantile_data <- scoringutils2::range_long_to_quantile(data,
                                                    keep_range_col = TRUE)
 
 

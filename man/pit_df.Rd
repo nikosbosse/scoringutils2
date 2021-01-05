@@ -15,7 +15,7 @@ pit_df(
 }
 \arguments{
 \item{data}{a data.frame with the following columns: `true_value`,
-`prediction`, `sample}
+`prediction`, `sample`}
 
 \item{plot}{logical. If TRUE, a histogram of the PIT values will be returned
 as well}
@@ -54,10 +54,10 @@ and if \code{full_output = TRUE}
 Wrapper around `pit()` for use in data.frames
 }
 \details{
-see \link{\code{pit}}
+see \code{\link{pit}}
 }
 \examples{
-example <- scoringutils::continuous_example_data
+example <- scoringutils2::continuous_example_data
 result <- pit_df(example, full_output = TRUE)
 
 }

@@ -18,7 +18,8 @@ Imports:
     data.table,
     ggplot2,
     methods,
-    goftest
+    goftest,
+    scoringRules
 RoxygenNote: 7.1.1
 Depends: 
     R (>= 2.10)

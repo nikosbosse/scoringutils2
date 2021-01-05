@@ -9,20 +9,20 @@ range_wide_to_long(data)
 \arguments{
 \item{data}{a data.frame following the specifications from
 \code{\link{eval_forecasts}}) for quantile forecasts. For an example, see
-\code{\link{quantile_example_data_wide}})}
+\code{\link{range_example_data_wide}})}
 }
 \value{
 a data.frame in long format
 }
 \description{
 Given a data.frame that follows the structure shown in
-\code{\link{quantile_example_data_wide}}, the function outputs the same
+\code{\link{range_example_data_wide}}, the function outputs the same
 data in a long format as (as shown in
-\code{\link{quantile_example_data_long}}). This can be useful e.g. for
+\code{\link{range_example_data_long}}). This can be useful e.g. for
 plotting.
 }
 \examples{
-wide <- scoringutils::quantile_example_data_wide
-long <- scoringutils::quantile_to_long(wide)
+wide <- scoringutils2::range_example_data_wide
+long <- scoringutils2::range_wide_to_long(wide)
 
 }

@@ -4,7 +4,7 @@
 #' Check whether a certain variable is not `NULL` and return the name of that
 #' variable and the function call where the variable is missing. This function
 #' is a helper function that should only be called within other functions
-#' @param var The variable to check
+#' @param ... The variables to check
 #' @return The function returns `NULL`, but throws an error if the variable is
 #' missing.
 check_not_null <- function(...) {
@@ -32,7 +32,7 @@ check_not_null <- function(...) {
 #' @description
 #' Check whether variables all have the same length
 #' @param ... The variables to check
-#' @param one_allowd logical, allow arguments of length one that can be recycled
+#' @param one_allowed logical, allow arguments of length one that can be recycled
 #'
 #' @return The function returns `NULL`, but throws an error if variable lengths
 #' differ
@@ -60,28 +60,6 @@ check_equal_length <- function(...,
   return(invisible(NULL))
 }
 
-
-#' @title Check NA values
-#'
-#' @description
-#' Check whether there are any NA values or not
-#' @param ... The variables to check
-#' @param verbose logical, whether or not to return a message to the user
-#'
-#' @return The function returns `NULL`, but throws an error if variable lenghs
-#' differ
-# check_NA_presence <- function(...,
-#                               verbose = TRUE) {
-#   vars <- list(...)
-#   NAs_present <- sapply(vars,
-#                         FUN = function(x) {
-#                           any(is.na(x))
-#                         })
-#   return(invisible(NULL))
-# }
-
-
-
 #' @title Calculate Geometric Mean
 #'
 #' @param x numeric vector of values for which to calculate the geometric mean
@@ -96,7 +74,7 @@ globalVariables(c(".",
                   ".SD",
                   "aem",
                   "boundary",
-                  "Brier_score",
+                  "brier_score",
                   "count",
                   "coverage_deviation",
                   "CRPS",

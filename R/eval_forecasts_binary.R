@@ -1,3 +1,21 @@
+#' @title Evaluate forecasts in a Binary Format
+#'
+#' @inheritParams eval_forecasts
+#' @return A data.table with appropriate scores. For more information see
+#' \code{\link{eval_forecasts}}
+#'
+#' @importFrom data.table ':='
+#'
+#' @examples
+#' # Probability Forecast for Binary Target
+#' binary_example <- data.table::setDT(scoringutils2::binary_example_data)
+#' eval <- scoringutils2::eval_forecasts(data = binary_example,
+#'                                      summarise_by = c("model"),
+#'                                      quantiles = c(0.5), sd = TRUE,
+#'                                      verbose = FALSE)
+#'
+#' @author Nikos Bosse \email{nikosbosse@gmail.com}
+
 eval_forecasts_binary <- function(data,
                                   by,
                                   summarise_by,
@@ -7,7 +25,7 @@ eval_forecasts_binary <- function(data,
                                   summarised,
                                   verbose){
 
-  res <- data[, "brier_score" := scoringutils::brier_score(true_value, prediction),
+  res <- data[, "brier_score" := scoringutils2::brier_score(true_value, prediction),
               by = by]
 
   if (summarised) {
@@ -18,7 +36,7 @@ eval_forecasts_binary <- function(data,
 
     # add standard deviation
     if (sd) {
-      res[, "brier_score_sd" := sd(brier_score, na.rm = TRUE), by = c(summarise_by)]
+      res <- add_sd(res, "brier_score", by = c(summarise_by))
     }
 
     # summarise by taking the mean over all relevant columns

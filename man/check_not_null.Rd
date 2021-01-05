@@ -7,7 +7,7 @@
 check_not_null(...)
 }
 \arguments{
-\item{var}{The variable to check}
+\item{...}{The variables to check}
 }
 \value{
 The function returns `NULL`, but throws an error if the variable is

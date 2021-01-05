@@ -2,20 +2,20 @@
 #'
 #' @description
 #' Given a data.frame that follows the structure shown in
-#' \code{\link{quantile_example_data_long}}, the function outputs the same
+#' \code{\link{range_example_data_long}}, the function outputs the same
 #' data in a long format as (as shown in
-#' \code{\link{quantile_example_data_wide}}). This can be useful e.g. for
+#' \code{\link{range_example_data_wide}}). This can be useful e.g. for
 #' plotting.
 #'
 #' @param data a data.frame following the specifications from
 #' \code{\link{eval_forecasts}}) for quantile forecasts. For an example, see
-#' \code{\link{quantile_example_data_long}})
+#' \code{\link{range_example_data_long}})
 #' @return a data.frame in wide format
 #' @importFrom data.table dcast
 #' @export
 #' @examples
-#' long <- scoringutils::quantile_example_data_long
-#' wide <- scoringutils::quantile_to_wide(long)
+#' long <- scoringutils2::range_example_data_long
+#' wide <- scoringutils2::range_long_to_wide(long)
 #'
 
 range_long_to_wide <- function(data) {
@@ -38,35 +38,54 @@ range_long_to_wide <- function(data) {
 #'
 #' @description
 #' Given a data.frame that follows the structure shown in
-#' \code{\link{quantile_example_data_wide}}, the function outputs the same
+#' \code{\link{range_example_data_wide}}, the function outputs the same
 #' data in a long format as (as shown in
-#' \code{\link{quantile_example_data_long}}). This can be useful e.g. for
+#' \code{\link{range_example_data_long}}). This can be useful e.g. for
 #' plotting.
 #'
 #' @param data a data.frame following the specifications from
 #' \code{\link{eval_forecasts}}) for quantile forecasts. For an example, see
-#' \code{\link{quantile_example_data_wide}})
+#' \code{\link{range_example_data_wide}})
 #' @return a data.frame in long format
 #' @importFrom data.table melt
 #' @export
 #' @examples
-#' wide <- scoringutils::quantile_example_data_wide
-#' long <- scoringutils::quantile_to_long(wide)
+#' wide <- scoringutils2::range_example_data_wide
+#' long <- scoringutils2::range_wide_to_long(wide)
 #'
 
 range_wide_to_long <- function(data) {
   colnames <- colnames(data)
-  ranges <- colnames[grepl("lower", colnames) | grepl("upper", colnames)]
 
-  id_vars <- colnames[!(colnames %in% ranges)]
+  # semi-wide format where only lower and upper are given independently
+  if (all(c("lower", "upper") %in% colnames)) {
 
-  data <- data.table::melt(data,
-                           id.vars = id_vars,
-                           measure.vars = ranges,
-                           variable.name = "range",
-                           value.name = "prediction")
-  data[, boundary := gsub("_.*", "", range)]
-  data[, range := as.numeric(gsub("^.*?_","", range))]
+    id_vars <- colnames[!(colnames %in% c("lower", "upper"))]
+
+    # need to remove quantile column if present
+    if ("quantile" %in% colnames) {
+      data[, "quantile" := NULL]
+    }
+
+    data <- data.table::melt(data,
+                             id.vars = id_vars,
+                             measure.vars = c("lower", "upper"),
+                             variable.name = "boundary",
+                             value.name = "prediction")
+  } else {
+    # alternative is super-wide format where every range has its own column
+    ranges <- colnames[grepl("lower", colnames) | grepl("upper", colnames)]
+
+    id_vars <- colnames[!(colnames %in% ranges)]
+
+    data <- data.table::melt(data,
+                             id.vars = id_vars,
+                             measure.vars = ranges,
+                             variable.name = "range",
+                             value.name = "prediction")
+    data[, boundary := gsub("_.*", "", range)]
+    data[, range := as.numeric(gsub("^.*?_","", range))]
+  }
 
   return(data)
 }
@@ -81,23 +100,23 @@ range_wide_to_long <- function(data) {
 #' to a format that uses quantiles only.
 #'
 #' Given a data.frame that follows the structure shown in
-#' \code{\link{quantile_example_data_long}}, the function outputs the same
+#' \code{\link{range_example_data_long}}, the function outputs the same
 #' data in a long format as (as shown in
-#' \code{\link{quantile_example_data_long}}). This can be useful e.g. for
+#' \code{\link{range_example_data_long}}). This can be useful e.g. for
 #' plotting. If you're data.frame is in a different format, consider running
-#' \code{\link{quantile_to_wide}} first.
+#' \code{\link{range_long_to_wide}} first.
 #'
 #' @param data a data.frame following the specifications from
 #' \code{\link{eval_forecasts}}) for quantile forecasts. For an example, see
-#' \code{\link{quantile_example_data_long}})
+#' \code{\link{range_example_data_long}})
 #' @param keep_range_col keep the range and boundary columns after
 #' transformation (default is FALSE)
 #' @return a data.frame in a plain quantile format
 #' @importFrom data.table copy
 #' @export
 #' @examples
-#' wide <- scoringutils::quantile_example_data_wide
-#' long <- scoringutils::quantile_to_long(wide)
+#' wide <- scoringutils2::range_example_data_wide
+#' long <- scoringutils2::range_wide_to_long(wide)
 #'
 #' plain_quantile <- range_long_to_quantile(long)
 #'
@@ -131,12 +150,12 @@ range_long_to_quantile <- function(data,
 #' interval ranges to denote quantiles.
 #'
 #' Given a data.frame that follows the structure shown in
-#' \code{\link{quantile_example_data_plain}}, the function outputs the same
+#' \code{\link{quantile_example_data}}, the function outputs the same
 #' data in a long format as (as shown in
-#' \code{\link{quantile_example_data_long}}).
+#' \code{\link{range_example_data_long}}).
 #'
 #' @param data a data.frame following the specifications shown in the example
-#' \code{\link{quantile_example_data_long}})
+#' \code{\link{range_example_data_long}})
 #' @param keep_quantile_col keep the quantile column in the final
 #' output after transformation (default is FALSE)
 #' @return a data.frame in a long interval range format
@@ -144,9 +163,9 @@ range_long_to_quantile <- function(data,
 #' @export
 #'
 #' @examples
-#' quantile_plain <- scoringutils::quantile_example_data_plain
+#' quantile <- scoringutils2::quantile_example_data
 #'
-#' long <- quantile_to_range_long(quantile_plain)
+#' long <- scoringutils2::quantile_to_range_long(quantile)
 #'
 
 quantile_to_range_long <- function(data,
@@ -193,9 +212,9 @@ quantile_to_range_long <- function(data,
 #' @export
 #'
 #' @examples
-#' example_data <- scoringutils::integer_example_data
+#' example_data <- scoringutils2::integer_example_data
 #'
-#' quantile_data <- sample_to_quantile(example_data)
+#' quantile_data <- scoringutils2::sample_to_quantile(example_data)
 #'
 
 
@@ -211,7 +230,7 @@ sample_to_quantile <- function(data,
 
   data <- data[, .(quantile = quantiles,
                    prediction = quantile(prediction, prob = quantiles,
-                                         type = type)),
+                                         type = type, na.rm = TRUE)),
                by = by]
 
   return(data)
@@ -239,9 +258,9 @@ sample_to_quantile <- function(data,
 #' @export
 #'
 #' @examples
-#' example_data <- scoringutils::integer_example_data
+#' example_data <- scoringutils2::integer_example_data
 #'
-#' quantile_data <- sample_to_range_long(example_data)
+#' quantile_data <- scoringutils2::sample_to_range_long(example_data)
 #'
 
 sample_to_range_long <- function(data,
@@ -255,11 +274,11 @@ sample_to_range_long <- function(data,
   upper_quantiles <- 1 - lower_quantiles
   quantiles <- sort(unique(c(lower_quantiles, upper_quantiles)))
 
-  data <- sample_to_quantile(data,
-                             quantiles = quantiles,
-                             type = type)
+  data <- scoringutils2::sample_to_quantile(data,
+                                            quantiles = quantiles,
+                                            type = type)
 
-  data <- quantile_to_range(data)
+  data <- scoringutils2::quantile_to_range_long(data)
 
   return(data)
 }
@@ -281,7 +300,7 @@ sample_to_range_long <- function(data,
 #'
 #' @param forecasts data.frame with the forecast data (as can be passed to
 #' \code{\link{eval_forecasts}}).
-#' @param obsrevations data.frame with the observations
+#' @param observations data.frame with the observations
 #' @param by character vector that denotes the columns by which to merge. Any
 #' value that is not a column in observations will be removed.
 #' @return a data.frame with forecasts and observations

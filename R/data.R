@@ -40,7 +40,7 @@
 #'   \item{boundary}{indicate lower or upper bound of prediction interval}
 #'   \item{range}{range of the corresponding prediction interval}
 #' }
-"range_example_long"
+"range_example_data_long"
 
 
 
@@ -58,8 +58,6 @@
 #'   \item{true_value}{true observed values}
 #'   \item{model}{name of the model that generated the forecasts}
 #'   \item{creation_date}{date on which the forecast was made}
-#'   \item{quantile}{quantile of the corresponding prediction}
-#'   \item{prediction}{value for the lower or upper bound of the given prediction interval}
 #'   \item{horizon}{forecast horizon in days}
 #'   \item{lower_0}{prediction for the lower bound of the 0\% interval range (median)}
 #'   \item{lower_10}{prediction for the lower bound of the 10\% interval range}
@@ -82,7 +80,29 @@
 #'   \item{upper_80}{prediction for the upper bound of the 80\% interval range}
 #'   \item{upper_90}{prediction for the upper bound of the 90\% interval range}
 #' }
-"range_example_wide"
+"range_example_data_wide"
+
+
+#' Range Forecast Example Data (Semi-Wide Format)
+#'
+#' A data set with predictions with different interval ranges relevant in the
+#' 2020 UK Covid-19 epidemic.
+#'
+#' @format A data frame with 5,419 rows and 12 columns:
+#' \describe{
+#'   \item{value_date}{the date for which a prediction was made}
+#'   \item{value_type}{the target to be predicted (short form)}
+#'   \item{geography}{the region for which a prediction was made}
+#'   \item{value_desc}{long form description of the prediction target}
+#'   \item{true_value}{true observed values}
+#'   \item{model}{name of the model that generated the forecasts}
+#'   \item{creation_date}{date on which the forecast was made}
+#'   \item{horizon}{forecast horizon in days}
+#'   \item{range}{range of the corresponding prediction interval}
+#'   \item{lower}{prediction for the lower bound of the corresponding interval}
+#'   \item{upper}{prediction for the upper bound of the corresponding interval}
+#' }
+"range_example_data_semi_wide"
 
 
 #' Continuous Forecast Example Data

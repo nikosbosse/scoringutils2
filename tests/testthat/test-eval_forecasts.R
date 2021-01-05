@@ -13,12 +13,12 @@ test_that("function produces output for a binary case", {
                          quantiles = c(0.5), sd = TRUE,
                          verbose = FALSE)
 
-  eval2 <- scoringutils::eval_forecasts(binary_example,
-                                        summarise_by = c("model", "value_desc"),
-                                        quantiles = c(0.5), sd = TRUE,
-                                        verbose = FALSE)
-
-  all(eval == eval2)
+  # eval2 <- scoringutils::eval_forecasts(binary_example,
+  #                                       summarise_by = c("model", "value_desc"),
+  #                                       quantiles = c(0.5), sd = TRUE,
+  #                                       verbose = FALSE)
+  #
+  # all(eval == eval2)
 
   expect_equal(nrow(eval) > 1,
                TRUE)
@@ -32,12 +32,12 @@ test_that("function produces output for a quantile format case", {
                          summarise_by = c("model"),
                          quantiles = c(0.5), sd = TRUE)
 
-  eval2 <- scoringutils::eval_forecasts(quantile_example,
-                         summarise_by = c("model"),
-                         quantiles = c(0.5), sd = TRUE)
-
-  eval2 <- eval2[, .SD, .SDcols = names(eval2)[names(eval2) %in% names(eval)]]
-  all(eval == eval2)
+  # eval2 <- scoringutils::eval_forecasts(quantile_example,
+  #                        summarise_by = c("model"),
+  #                        quantiles = c(0.5), sd = TRUE)
+  #
+  # eval2 <- eval2[, .SD, .SDcols = names(eval2)[names(eval2) %in% names(eval)]]
+  # all(eval == eval2)
 
   expect_equal(nrow(eval) > 1,
                TRUE)
@@ -66,15 +66,15 @@ test_that("function produces output for a continuous format case", {
                          summarise_by = c("model"),
                          quantiles = c(0.5), sd = TRUE)
 
-  eval2 <- scoringutils::eval_forecasts(example,
-                                        summarised = TRUE,
-                         summarise_by = c("model"),
-                         quantiles = c(0.5), sd = TRUE)
-
-  setcolorder(eval2, colnames(eval))
-  eval <- eval[order(model)]
-  eval2 <- eval2[order(model)]
-  all(eval == eval2, na.rm = TRUE)
+  # eval2 <- scoringutils::eval_forecasts(example,
+  #                                       summarised = TRUE,
+  #                        summarise_by = c("model"),
+  #                        quantiles = c(0.5), sd = TRUE)
+  #
+  # setcolorder(eval2, colnames(eval))
+  # eval <- eval[order(model)]
+  # eval2 <- eval2[order(model)]
+  # all(eval == eval2, na.rm = TRUE)
 
   expect_equal(nrow(eval) > 1,
                TRUE)

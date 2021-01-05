@@ -34,7 +34,7 @@ obs <- covid19.forecasts.uk::covid_uk_data %>%
 # join
 quantile_example_data <- dplyr::left_join(obs, data) %>%
   dplyr::mutate(model = as.character(model))
-
+data.table::setDT(quantile_example_data)
 # make model a character instead of a factor
 usethis::use_data(quantile_example_data, overwrite = TRUE)
 
@@ -42,15 +42,28 @@ usethis::use_data(quantile_example_data, overwrite = TRUE)
 
 
 # create long range example ----------------------------------------------------
-range_example_long <- quantile_to_range_long(quantile_example_data)
-usethis::use_data(range_example_long, overwrite = TRUE)
+range_example_data_long <- quantile_to_range_long(quantile_example_data)
+usethis::use_data(range_example_data_long, overwrite = TRUE)
 
 
 
 # create wide range example ----------------------------------------------------
-range_example_wide <- range_long_to_wide(range_example_long)
-range_example_wide[, NA_NA := NULL]
-usethis::use_data(range_example_wide, overwrite = TRUE)
+range_example_data_wide <- range_long_to_wide(range_example_data_long)
+range_example_data_wide[, NA_NA := NULL]
+usethis::use_data(range_example_data_wide, overwrite = TRUE)
+
+
+
+
+#create semi-wide range example ------------------------------------------------
+range_example_data_semi_wide <- data.table::copy(range_example_data_long)
+range_example_data_semi_wide[, "quantile" := NULL]
+range_example_data_semi_wide <- data.table::dcast(range_example_data_semi_wide,
+                                                  ... ~ boundary,
+                                                  value.var = "prediction")
+range_example_data_semi_wide[, "NA" := NULL]
+usethis::use_data(range_example_data_semi_wide, overwrite = TRUE)
+
 
 
 # get continuous sample data ---------------------------------------------------

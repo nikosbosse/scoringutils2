@@ -235,10 +235,10 @@ pit <- function(true_values,
 #' @description Wrapper around `pit()` for use in data.frames
 #'
 #' @details
-#' see \link{\code{pit}}
+#' see \code{\link{pit}}
 #'
 #' @param data a data.frame with the following columns: `true_value`,
-#' `prediction`, `sample
+#' `prediction`, `sample`
 #' @inheritParams pit
 #' @return a list with the following components:
 #' \itemize{
@@ -259,7 +259,7 @@ pit <- function(true_values,
 #' @importFrom goftest ad.test
 #' @importFrom stats runif sd
 #' @examples
-#' example <- scoringutils::continuous_example_data
+#' example <- scoringutils2::continuous_example_data
 #' result <- pit_df(example, full_output = TRUE)
 #'
 #' @export
@@ -283,6 +283,9 @@ pit_df <- function(data,
 
 
   data <- data.table::as.data.table(data)
+
+  # filter out instances where prediction is NA
+  data <- data[!is.na(prediction)]
 
   # reformat data.table to wide format for PIT
   data_wide <- data.table::dcast(data, ... ~ paste("sampl_", sample, sep = ""),
@@ -335,7 +338,42 @@ pit_df <- function(data,
 
 
 
+pit_df_fast <- function(data,
+                        n_replicates = 50,
+                        by = by) {
 
+  data <- data.table::as.data.table(data)
+
+  pit_arguments = list(plot = FALSE,
+                       full_output = FALSE,
+                       n_replicates = n_replicates,
+                       num_bins = 1,
+                       verbose = FALSE)
+
+
+
+  # reformat data.table to wide format for PIT
+  data_wide <- data.table::dcast(data, ... ~ paste("sampl_", sample, sep = ""),
+                                 value.var = "prediction")
+
+
+
+  data_wide[, c("pit_p_val", "pit_sd") := do.call(pit, c(list(true_value,
+                                                        as.matrix(.SD)),
+                                                   pit_arguments)),
+      .SDcols = names(data_wide)[grepl("sampl_", names(data_wide))], by = by]
+
+
+  # melt data back
+  sample_names <- names(data_wide)[grepl("sampl_", names(data_wide))]
+  data <- data.table::melt(data_wide,
+                   measure.vars = sample_names,
+                   variable.name = "sample",
+                   value.name = "prediction")
+
+
+  return(data)
+}
 
 
 

@@ -47,9 +47,9 @@
 #'   binary predictions.}
 #' For quantile forecasts the data can be provided in variety of formats. You
 #' can either use a range-based format or a quantile-based format. (You can
-#' convert between formats using \code{\link{quantile_to_range}},
-#' \code{\link{range_to_quantile}},
-#' \code{\link{sample_to_range}},
+#' convert between formats using \code{\link{quantile_to_range_long}},
+#' \code{\link{range_long_to_quantile}},
+#' \code{\link{sample_to_range_long}},
 #' \code{\link{sample_to_quantile}})
 #' For a quantile-format forecast you should provide:
 #' \itemize{
@@ -86,7 +86,8 @@
 #' over categories different from the scoring.
 #' \code{summarise_by} is also the grouping level used to compute
 #' (and possibly plot) the probability integral transform(pit).
-# #' @param metrics the metrics you want to have in the output
+#' @param metrics the metrics you want to have in the output. If `NULL` (the
+#' default), all available metrics will be computed.
 #' @param quantiles numeric vector of quantiles to be returned when summarising.
 #' Instead of just returning a mean, quantiles will be returned for the
 #' groups specified through `summarise_by`. By default, no quantiles are
@@ -115,51 +116,47 @@
 #' when summarising.
 #'
 #' @importFrom data.table ':=' as.data.table
+#' @importFrom methods hasArg
 #'
 #' @examples
 #' ## Probability Forecast for Binary Target
-#' binary_example <- data.table::setDT(scoringutils::binary_example_data)
-#' eval <- scoringutils::eval_forecasts(binary_example,
-#'                                      by = c("id", "model", "horizon"),
+#' binary_example <- data.table::setDT(scoringutils2::binary_example_data)
+#' eval <- scoringutils2::eval_forecasts(binary_example,
 #'                                      summarise_by = c("model"),
-#'                                      quantiles = c(0.5), sd = TRUE)
-#' eval <- scoringutils::eval_forecasts(binary_example,
-#'                                      by = c("id", "model", "horizon"))
+#'                                      quantiles = c(0.5), sd = TRUE,
+#'                                      verbose = FALSE)
 #'
 #' ## Quantile Forecasts
-#' # wide format
-#' quantile_example <- data.table::setDT(scoringutils::quantile_example_data_wide)
-#' eval <- scoringutils::eval_forecasts(quantile_example,
-#'                                      by = c("model", "horizon", "id"),
+#' # wide format example (this examples shows usage of both wide formats)
+#' range_example_wide <- data.table::setDT(scoringutils2::range_example_data_wide)
+#' range_example <- scoringutils2::range_wide_to_long(range_example_wide)
+#' # equivalent:
+#' wide2 <- data.table::setDT(scoringutils2::range_example_data_semi_wide)
+#' range_example <- scoringutils2::range_wide_to_long(wide2)
+#' eval <- scoringutils2::eval_forecasts(range_example,
 #'                                      summarise_by = "model",
 #'                                      quantiles = c(0.05, 0.95),
 #'                                      sd = TRUE)
-#' eval <- scoringutils::eval_forecasts(quantile_example,
-#'                                      by = c("model", "horizon", "id"))
+#' eval <- scoringutils2::eval_forecasts(range_example)
 #'
 #' #long format
 #'
-#' eval <- scoringutils::eval_forecasts(scoringutils::quantile_example_data_long,
-#'                                      by = c("model", "horizon", "id"),
+#' eval <- scoringutils2::eval_forecasts(scoringutils2::range_example_data_long,
 #'                                      summarise_by = c("model", "range"))
 #'
 #' ## Integer Forecasts
-#' integer_example <- data.table::setDT(scoringutils::integer_example_data)
-#' eval <- scoringutils::eval_forecasts(integer_example,
-#'                                      by = c("model", "id", "horizon"),
+#' integer_example <- data.table::setDT(scoringutils2::integer_example_data)
+#' eval <- scoringutils2::eval_forecasts(integer_example,
 #'                                      summarise_by = c("model"),
 #'                                      quantiles = c(0.1, 0.9),
 #'                                      sd = TRUE,
-#'                                      pit_plots = TRUE,
-#'                                      pit_arguments = list(n_replicates = 30,
-#'                                                           plot = TRUE))
-#' eval <- scoringutils::eval_forecasts(integer_example)
+#'                                      pit_plots = TRUE)
+#' eval <- scoringutils2::eval_forecasts(integer_example)
 #'
 #' ## Continuous Forecasts
-#' continuous_example <- data.table::setDT(scoringutils::continuous_example_data)
-#' eval <- scoringutils::eval_forecasts(continuous_example,
-#'                                      by = c("model", "id", "horizon"))
-#' eval <- scoringutils::eval_forecasts(continuous_example,
+#' continuous_example <- data.table::setDT(scoringutils2::continuous_example_data)
+#' eval <- scoringutils2::eval_forecasts(continuous_example)
+#' eval <- scoringutils2::eval_forecasts(continuous_example,
 #'                                      quantiles = c(0.5, 0.9),
 #'                                      sd = TRUE,
 #'                                      summarise_by = c("model"))
@@ -186,7 +183,7 @@ eval_forecasts <- function(data,
 
   # preparations ---------------------------------------------------------------
   # check data argument is provided
-  if (!all(methods::hasArg("data"))) {
+  if (!methods::hasArg("data")) {
     stop("need arguments 'data'in function 'eval_forecasts()'")
   }
   check_not_null(data = data)
@@ -300,7 +297,6 @@ eval_forecasts <- function(data,
                                    quantiles = quantiles,
                                    sd = sd,
                                    pit_plots = pit_plots,
-                                   pit_arguments = pit_arguments,
                                    weigh_interval_score = weigh_interval_score,
                                    summarised = summarised,
                                    verbose = verbose)
@@ -316,11 +312,10 @@ eval_forecasts <- function(data,
                                  by = by,
                                  summarise_by = summarise_by,
                                  metrics = metrics,
+                                 prediction_type = prediction_type,
                                  quantiles = quantiles,
                                  sd = sd,
                                  pit_plots = pit_plots,
-                                 prediction_type = prediction_type,
-                                 pit_arguments = pit_arguments,
                                  summarised = summarised,
                                  verbose = verbose)
     return(res)

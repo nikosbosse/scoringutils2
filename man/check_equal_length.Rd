@@ -9,7 +9,7 @@ check_equal_length(..., one_allowed = TRUE)
 \arguments{
 \item{...}{The variables to check}
 
-\item{one_allowd}{logical, allow arguments of length one that can be recycled}
+\item{one_allowed}{logical, allow arguments of length one that can be recycled}
 }
 \value{
 The function returns `NULL`, but throws an error if variable lengths

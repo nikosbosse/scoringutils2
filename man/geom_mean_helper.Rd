@@ -2,23 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{geom_mean_helper}
 \alias{geom_mean_helper}
-\title{Check NA values}
+\title{Calculate Geometric Mean}
 \usage{
 geom_mean_helper(x)
 }
 \arguments{
 \item{x}{numeric vector of values for which to calculate the geometric mean}
-
-\item{...}{The variables to check}
-
-\item{verbose}{logical, whether or not to return a message to the user}
 }
 \value{
-The function returns `NULL`, but throws an error if variable lenghs
-differ
-
 the geometric mean of the values in `x`
 }
 \description{
-Check whether there are any NA values or not
+Calculate Geometric Mean
 }

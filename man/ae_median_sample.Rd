@@ -27,5 +27,5 @@ Absolute error of the median calculated as
 \examples{
 true_values <- rnorm(30, mean = 1:30)
 predicted_values <- rnorm(30, mean = 1:30)
-ae_median(true_values, predicted_values)
+ae_median_sample(true_values, predicted_values)
 }

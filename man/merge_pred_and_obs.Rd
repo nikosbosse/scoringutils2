@@ -10,10 +10,10 @@ merge_pred_and_obs(forecasts, observations, by = NULL)
 \item{forecasts}{data.frame with the forecast data (as can be passed to
 \code{\link{eval_forecasts}}).}
 
+\item{observations}{data.frame with the observations}
+
 \item{by}{character vector that denotes the columns by which to merge. Any
 value that is not a column in observations will be removed.}
-
-\item{obsrevations}{data.frame with the observations}
 }
 \value{
 a data.frame with forecasts and observations
